@@ -3,6 +3,7 @@ package com.quan.cms.exception;
 import com.quan.cms.dto.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -87,7 +88,20 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest()
                 .body(response);
     }
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDenied(
+            AccessDeniedException ex
+    ) {
 
+        ErrorResponse response = ErrorResponse.builder()
+                .success(false)
+                .message("Access Denied")
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(response);
+    }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobal(
             Exception ex
