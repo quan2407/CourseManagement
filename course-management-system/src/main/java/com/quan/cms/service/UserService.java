@@ -2,8 +2,18 @@ package com.quan.cms.service;
 
 import com.quan.cms.dto.request.CreateUserRequest;
 import com.quan.cms.dto.response.UserResponse;
+import com.quan.cms.enums.Role;
+
+import java.util.List;
 
 public interface UserService {
 
     UserResponse createUser(CreateUserRequest request);
+
+    List<UserResponse> getAllUsers(
+            Role role,
+            Boolean isActive
+    );
+
+    UserResponse getUserById(Long userId);
 }

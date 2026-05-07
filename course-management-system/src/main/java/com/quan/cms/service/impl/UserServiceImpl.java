@@ -3,6 +3,7 @@ package com.quan.cms.service.impl;
 import com.quan.cms.dto.request.CreateUserRequest;
 import com.quan.cms.dto.response.UserResponse;
 import com.quan.cms.entity.User;
+import com.quan.cms.enums.Role;
 import com.quan.cms.exception.BadRequestException;
 import com.quan.cms.mapper.UserMapper;
 import com.quan.cms.repository.UserRepository;
@@ -10,6 +11,8 @@ import com.quan.cms.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -53,5 +56,51 @@ public class UserServiceImpl implements UserService {
         User savedUser = userRepository.save(user);
 
         return userMapper.toResponse(savedUser);
+    }
+
+    @Override
+    public List<UserResponse> getAllUsers(
+            Role role,
+            Boolean isActive
+    ) {
+
+        List<User> users;
+
+        if (role != null && isActive != null) {
+
+            users = userRepository.findByRoleAndIsActive(
+                    role,
+                    isActive
+            );
+
+        } else if (role != null) {
+
+            users = userRepository.findByRole(role);
+
+        } else if (isActive != null) {
+
+            users = userRepository.findByIsActive(isActive);
+
+        } else {
+
+            users = userRepository.findAll();
+        }
+
+        return users.stream()
+                .map(userMapper::toResponse)
+                .toList();
+    }
+
+    @Override
+    public UserResponse getUserById(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new BadRequestException(
+                                "User not found"
+                        )
+                );
+
+        return userMapper.toResponse(user);
     }
 }
