@@ -15,6 +15,8 @@ import com.quan.cms.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CourseServiceImpl implements CourseService {
@@ -56,5 +58,26 @@ public class CourseServiceImpl implements CourseService {
                 courseRepository.save(course);
 
         return courseMapper.toResponse(savedCourse);
+    }
+
+    @Override
+    public List<CourseResponse> getAllCourses(
+            CourseStatus status
+    ) {
+
+        List<Course> courses;
+
+        if (status != null) {
+
+            courses = courseRepository.findByStatus(status);
+
+        } else {
+
+            courses = courseRepository.findAll();
+        }
+
+        return courses.stream()
+                .map(courseMapper::toResponse)
+                .toList();
     }
 }
