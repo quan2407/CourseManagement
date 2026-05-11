@@ -1,6 +1,7 @@
 package com.quan.cms.service;
 
 import com.quan.cms.dto.request.CreateCourseRequest;
+import com.quan.cms.dto.response.CourseDetailResponse;
 import com.quan.cms.dto.response.CourseResponse;
 import com.quan.cms.enums.CourseStatus;
 
@@ -13,5 +14,8 @@ public interface CourseService {
     );
     List<CourseResponse> getAllCourses(
             CourseStatus status
+    );
+    CourseDetailResponse getCourseById(
+            Long courseId
     );
 }

@@ -2,6 +2,7 @@ package com.quan.cms.controller;
 
 import com.quan.cms.dto.request.CreateCourseRequest;
 import com.quan.cms.dto.response.ApiResponse;
+import com.quan.cms.dto.response.CourseDetailResponse;
 import com.quan.cms.dto.response.CourseResponse;
 import com.quan.cms.enums.CourseStatus;
 import com.quan.cms.service.CourseService;
@@ -45,6 +46,16 @@ public class CourseController {
         return ResponseUtil.success(
                 "Courses retrieved successfully",
                 courseService.getAllCourses(status)
+        );
+    }
+    @GetMapping("/{courseId}")
+    public ApiResponse<CourseDetailResponse> getCourseById(
+            @PathVariable Long courseId
+    ) {
+
+        return ResponseUtil.success(
+                "Course retrieved successfully",
+                courseService.getCourseById(courseId)
         );
     }
 }

@@ -1,14 +1,18 @@
 package com.quan.cms.service.impl;
 
 import com.quan.cms.dto.request.CreateCourseRequest;
+import com.quan.cms.dto.response.CourseDetailResponse;
 import com.quan.cms.dto.response.CourseResponse;
+import com.quan.cms.dto.response.LessonResponse;
 import com.quan.cms.entity.Course;
+import com.quan.cms.entity.Lesson;
 import com.quan.cms.entity.User;
 import com.quan.cms.enums.CourseStatus;
 import com.quan.cms.enums.Role;
 import com.quan.cms.exception.BadRequestException;
 import com.quan.cms.exception.ResourceNotFoundException;
 import com.quan.cms.mapper.CourseMapper;
+import com.quan.cms.mapper.LessonMapper;
 import com.quan.cms.repository.CourseRepository;
 import com.quan.cms.repository.UserRepository;
 import com.quan.cms.service.CourseService;
@@ -27,6 +31,7 @@ public class CourseServiceImpl implements CourseService {
 
     private final CourseMapper courseMapper;
 
+    private final LessonMapper lessonMapper;
     @Override
     public CourseResponse createCourse(
             CreateCourseRequest request
@@ -79,5 +84,32 @@ public class CourseServiceImpl implements CourseService {
         return courses.stream()
                 .map(courseMapper::toResponse)
                 .toList();
+    }
+
+    @Override
+    public CourseDetailResponse getCourseById(
+            Long courseId
+    ) {
+
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Course not found"
+                        )
+                );
+
+        List<LessonResponse> publishedLessons =
+                course.getLessons()
+                        .stream()
+                        .filter(Lesson::getIsPublished)
+                        .map(lessonMapper::toResponse)
+                        .toList();
+
+        CourseDetailResponse response =
+                courseMapper.toDetailResponse(course);
+
+        response.setLessons(publishedLessons);
+
+        return response;
     }
 }
