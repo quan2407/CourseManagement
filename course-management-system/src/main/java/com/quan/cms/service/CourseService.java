@@ -1,6 +1,7 @@
 package com.quan.cms.service;
 
 import com.quan.cms.dto.request.CreateCourseRequest;
+import com.quan.cms.dto.request.UpdateCourseRequest;
 import com.quan.cms.dto.response.CourseDetailResponse;
 import com.quan.cms.dto.response.CourseResponse;
 import com.quan.cms.enums.CourseStatus;
@@ -17,5 +18,9 @@ public interface CourseService {
     );
     CourseDetailResponse getCourseById(
             Long courseId
+    );
+    CourseResponse updateCourse(
+            Long courseId,
+            UpdateCourseRequest request
     );
 }

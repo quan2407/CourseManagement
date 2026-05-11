@@ -1,6 +1,7 @@
 package com.quan.cms.service.impl;
 
 import com.quan.cms.dto.request.CreateCourseRequest;
+import com.quan.cms.dto.request.UpdateCourseRequest;
 import com.quan.cms.dto.response.CourseDetailResponse;
 import com.quan.cms.dto.response.CourseResponse;
 import com.quan.cms.dto.response.LessonResponse;
@@ -111,5 +112,47 @@ public class CourseServiceImpl implements CourseService {
         response.setLessons(publishedLessons);
 
         return response;
+    }
+
+    @Override
+    public CourseResponse updateCourse(
+            Long courseId,
+            UpdateCourseRequest request
+    ) {
+
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Course not found"
+                        )
+                );
+
+        User teacher = userRepository.findById(
+                        request.getTeacherId()
+                )
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Teacher not found"
+                        )
+                );
+
+        if (teacher.getRole() != Role.TEACHER) {
+
+            throw new BadRequestException(
+                    "Assigned user is not a teacher"
+            );
+        }
+
+        courseMapper.updateCourseFromRequest(
+                request,
+                course
+        );
+
+        course.setTeacher(teacher);
+
+        Course updatedCourse =
+                courseRepository.save(course);
+
+        return courseMapper.toResponse(updatedCourse);
     }
 }

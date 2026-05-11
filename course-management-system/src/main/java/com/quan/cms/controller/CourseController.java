@@ -1,6 +1,7 @@
 package com.quan.cms.controller;
 
 import com.quan.cms.dto.request.CreateCourseRequest;
+import com.quan.cms.dto.request.UpdateCourseRequest;
 import com.quan.cms.dto.response.ApiResponse;
 import com.quan.cms.dto.response.CourseDetailResponse;
 import com.quan.cms.dto.response.CourseResponse;
@@ -56,6 +57,25 @@ public class CourseController {
         return ResponseUtil.success(
                 "Course retrieved successfully",
                 courseService.getCourseById(courseId)
+        );
+    }
+    @PutMapping("/{courseId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<CourseResponse> updateCourse(
+
+            @PathVariable Long courseId,
+
+            @Valid
+            @RequestBody
+            UpdateCourseRequest request
+    ) {
+
+        return ResponseUtil.success(
+                "Course updated successfully",
+                courseService.updateCourse(
+                        courseId,
+                        request
+                )
         );
     }
 }

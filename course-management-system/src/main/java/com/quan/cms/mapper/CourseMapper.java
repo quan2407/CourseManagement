@@ -1,11 +1,13 @@
 package com.quan.cms.mapper;
 
 import com.quan.cms.dto.request.CreateCourseRequest;
+import com.quan.cms.dto.request.UpdateCourseRequest;
 import com.quan.cms.dto.response.CourseDetailResponse;
 import com.quan.cms.dto.response.CourseResponse;
 import com.quan.cms.entity.Course;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface CourseMapper {
@@ -35,4 +37,13 @@ public interface CourseMapper {
             expression = "java(course.getStatus().name())"
     )
     CourseDetailResponse toDetailResponse(Course course);
+    @Mapping(target = "courseId", ignore = true)
+    @Mapping(target = "teacher", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "lessons", ignore = true)
+    @Mapping(target = "enrollments", ignore = true)
+    void updateCourseFromRequest(
+            UpdateCourseRequest request,
+            @MappingTarget Course course
+    );
 }
