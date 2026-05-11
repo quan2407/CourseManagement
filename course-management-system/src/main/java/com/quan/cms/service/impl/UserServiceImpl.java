@@ -1,10 +1,12 @@
 package com.quan.cms.service.impl;
 
 import com.quan.cms.dto.request.CreateUserRequest;
+import com.quan.cms.dto.request.UpdateUserRoleRequest;
 import com.quan.cms.dto.response.UserResponse;
 import com.quan.cms.entity.User;
 import com.quan.cms.enums.Role;
 import com.quan.cms.exception.BadRequestException;
+import com.quan.cms.exception.ResourceNotFoundException;
 import com.quan.cms.mapper.UserMapper;
 import com.quan.cms.repository.UserRepository;
 import com.quan.cms.service.UserService;
@@ -102,5 +104,32 @@ public class UserServiceImpl implements UserService {
                 );
 
         return userMapper.toResponse(user);
+    }
+
+    @Override
+    public UserResponse updateUserRole(
+            Long userId,
+            UpdateUserRoleRequest request
+    ) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "User not found"
+                        )
+                );
+
+        if (user.getRole() == Role.ADMIN) {
+
+            throw new BadRequestException(
+                    "Cannot update another admin role"
+            );
+        }
+
+        user.setRole(request.getRole());
+
+        User updatedUser = userRepository.save(user);
+
+        return userMapper.toResponse(updatedUser);
     }
 }
