@@ -2,6 +2,7 @@ package com.quan.cms.controller;
 
 import com.quan.cms.dto.request.CreateCourseRequest;
 import com.quan.cms.dto.request.UpdateCourseRequest;
+import com.quan.cms.dto.request.UpdateCourseStatusRequest;
 import com.quan.cms.dto.response.ApiResponse;
 import com.quan.cms.dto.response.CourseDetailResponse;
 import com.quan.cms.dto.response.CourseResponse;
@@ -73,6 +74,26 @@ public class CourseController {
         return ResponseUtil.success(
                 "Course updated successfully",
                 courseService.updateCourse(
+                        courseId,
+                        request
+                )
+        );
+    }
+
+    @PutMapping("/{courseId}/status")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<CourseResponse> updateCourseStatus(
+
+            @PathVariable Long courseId,
+
+            @Valid
+            @RequestBody
+            UpdateCourseStatusRequest request
+    ) {
+
+        return ResponseUtil.success(
+                "Course status updated successfully",
+                courseService.updateCourseStatus(
                         courseId,
                         request
                 )
