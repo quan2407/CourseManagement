@@ -2,6 +2,7 @@ package com.quan.cms.service;
 
 import com.quan.cms.dto.request.CreateUserRequest;
 import com.quan.cms.dto.request.UpdateUserRoleRequest;
+import com.quan.cms.dto.request.UpdateUserStatusRequest;
 import com.quan.cms.dto.response.UserResponse;
 import com.quan.cms.enums.Role;
 
@@ -21,5 +22,10 @@ public interface UserService {
     UserResponse updateUserRole(
             Long userId,
             UpdateUserRoleRequest request
+    );
+
+    UserResponse updateUserStatus(
+            Long userId,
+            UpdateUserStatusRequest request
     );
 }

@@ -2,6 +2,7 @@ package com.quan.cms.controller;
 
 import com.quan.cms.dto.request.CreateUserRequest;
 import com.quan.cms.dto.request.UpdateUserRoleRequest;
+import com.quan.cms.dto.request.UpdateUserStatusRequest;
 import com.quan.cms.dto.response.ApiResponse;
 import com.quan.cms.dto.response.UserResponse;
 import com.quan.cms.enums.Role;
@@ -76,6 +77,23 @@ public class UserController {
         return ResponseUtil.success(
                 "User role updated successfully",
                 userService.updateUserRole(userId, request)
+        );
+    }
+
+    @PutMapping("/{userId}/status")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<UserResponse> updateUserStatus(
+
+            @PathVariable Long userId,
+
+            @Valid
+            @RequestBody
+            UpdateUserStatusRequest request
+    ) {
+
+        return ResponseUtil.success(
+                "User status updated successfully",
+                userService.updateUserStatus(userId, request)
         );
     }
 }

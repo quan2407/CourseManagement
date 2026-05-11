@@ -2,6 +2,7 @@ package com.quan.cms.service.impl;
 
 import com.quan.cms.dto.request.CreateUserRequest;
 import com.quan.cms.dto.request.UpdateUserRoleRequest;
+import com.quan.cms.dto.request.UpdateUserStatusRequest;
 import com.quan.cms.dto.response.UserResponse;
 import com.quan.cms.entity.User;
 import com.quan.cms.enums.Role;
@@ -127,6 +128,26 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setRole(request.getRole());
+
+        User updatedUser = userRepository.save(user);
+
+        return userMapper.toResponse(updatedUser);
+    }
+
+    @Override
+    public UserResponse updateUserStatus(
+            Long userId,
+            UpdateUserStatusRequest request
+    ) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "User not found"
+                        )
+                );
+
+        user.setIsActive(request.getIsActive());
 
         User updatedUser = userRepository.save(user);
 
