@@ -28,4 +28,5 @@ public interface CourseService {
             Long courseId,
             UpdateCourseStatusRequest request
     );
+    void deleteCourse(Long courseId);
 }

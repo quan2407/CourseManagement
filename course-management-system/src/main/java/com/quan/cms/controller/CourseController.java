@@ -99,4 +99,17 @@ public class CourseController {
                 )
         );
     }
+    @DeleteMapping("/{courseId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<Object> deleteCourse(
+            @PathVariable Long courseId
+    ) {
+
+        courseService.deleteCourse(courseId);
+
+        return ResponseUtil.success(
+                "Course deleted successfully",
+                null
+        );
+    }
 }
