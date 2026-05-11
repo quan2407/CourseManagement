@@ -28,4 +28,6 @@ public interface UserService {
             Long userId,
             UpdateUserStatusRequest request
     );
+
+    void deleteUser(Long userId);
 }

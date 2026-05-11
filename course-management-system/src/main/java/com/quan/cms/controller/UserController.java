@@ -96,4 +96,18 @@ public class UserController {
                 userService.updateUserStatus(userId, request)
         );
     }
+
+    @DeleteMapping("/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<Object> deleteUser(
+            @PathVariable Long userId
+    ) {
+
+        userService.deleteUser(userId);
+
+        return ResponseUtil.success(
+                "User deleted successfully",
+                null
+        );
+    }
 }

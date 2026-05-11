@@ -153,4 +153,24 @@ public class UserServiceImpl implements UserService {
 
         return userMapper.toResponse(updatedUser);
     }
+
+    @Override
+    public void deleteUser(Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "User not found"
+                        )
+                );
+
+        if (user.getRole() == Role.ADMIN) {
+
+            throw new BadRequestException(
+                    "Cannot delete admin account"
+            );
+        }
+
+        userRepository.delete(user);
+    }
 }
