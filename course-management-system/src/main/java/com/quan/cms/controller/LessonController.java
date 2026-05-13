@@ -73,4 +73,14 @@ public class LessonController {
                 )
         );
     }
+    @GetMapping("/lessons/{lessonId}")
+    public ApiResponse<LessonResponse> getLessonById(
+            @PathVariable Long lessonId
+    ) {
+
+        return ResponseUtil.success(
+                "Lesson retrieved successfully",
+                lessonService.getLessonById(lessonId)
+        );
+    }
 }

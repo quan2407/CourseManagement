@@ -148,4 +148,23 @@ public class LessonServiceImpl implements LessonService {
 
         return lessonMapper.toResponse(updatedLesson);
     }
+
+    @Override
+    public LessonResponse getLessonById(
+            Long lessonId
+    ) {
+
+        Lesson lesson =
+                lessonRepository
+                        .findByLessonIdAndIsPublishedTrue(
+                                lessonId
+                        )
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Lesson not found"
+                                )
+                        );
+
+        return lessonMapper.toResponse(lesson);
+    }
 }

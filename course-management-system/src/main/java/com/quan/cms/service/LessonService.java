@@ -21,4 +21,7 @@ public interface LessonService {
             UpdateLessonPublishRequest request,
             String username
     );
+    LessonResponse getLessonById(
+            Long lessonId
+    );
 }
