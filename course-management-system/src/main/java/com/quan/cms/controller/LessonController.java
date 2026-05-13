@@ -106,4 +106,22 @@ public class LessonController {
                 )
         );
     }
+    @DeleteMapping("/lessons/{lessonId}")
+    public ApiResponse<Object> deleteLesson(
+
+            @PathVariable Long lessonId,
+
+            Authentication authentication
+    ) {
+
+        lessonService.deleteLesson(
+                lessonId,
+                authentication.getName()
+        );
+
+        return ResponseUtil.success(
+                "Lesson deleted successfully",
+                null
+        );
+    }
 }

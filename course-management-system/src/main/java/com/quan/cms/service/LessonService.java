@@ -30,4 +30,8 @@ public interface LessonService {
             UpdateLessonRequest request,
             String username
     );
+    void deleteLesson(
+            Long lessonId,
+            String username
+    );
 }
