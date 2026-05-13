@@ -1,6 +1,7 @@
 package com.quan.cms.controller;
 
 import com.quan.cms.dto.request.CreateLessonRequest;
+import com.quan.cms.dto.request.UpdateLessonPublishRequest;
 import com.quan.cms.dto.response.ApiResponse;
 import com.quan.cms.dto.response.LessonResponse;
 import com.quan.cms.service.LessonService;
@@ -48,6 +49,28 @@ public class LessonController {
         return ResponseUtil.success(
                 "Lessons retrieved successfully",
                 lessonService.getLessonsByCourse(courseId)
+        );
+    }
+
+    @PutMapping("/lessons/{lessonId}/publish")
+    public ApiResponse<LessonResponse> updateLessonPublishStatus(
+
+            @PathVariable Long lessonId,
+
+            @Valid
+            @RequestBody
+            UpdateLessonPublishRequest request,
+
+            Authentication authentication
+    ) {
+
+        return ResponseUtil.success(
+                "Lesson publish status updated successfully",
+                lessonService.updateLessonPublishStatus(
+                        lessonId,
+                        request,
+                        authentication.getName()
+                )
         );
     }
 }
