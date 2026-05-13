@@ -2,6 +2,7 @@ package com.quan.cms.service.impl;
 
 import com.quan.cms.dto.request.CreateLessonRequest;
 import com.quan.cms.dto.request.UpdateLessonPublishRequest;
+import com.quan.cms.dto.request.UpdateLessonRequest;
 import com.quan.cms.dto.response.LessonResponse;
 import com.quan.cms.entity.Course;
 import com.quan.cms.entity.Lesson;
@@ -166,5 +167,53 @@ public class LessonServiceImpl implements LessonService {
                         );
 
         return lessonMapper.toResponse(lesson);
+    }
+
+    @Override
+    public LessonResponse updateLesson(
+            Long lessonId,
+            UpdateLessonRequest request,
+            String username
+    ) {
+
+        Lesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Lesson not found"
+                        )
+                );
+
+        User currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "User not found"
+                        )
+                );
+
+        boolean isAdmin =
+                currentUser.getRole() == Role.ADMIN;
+
+        boolean isCourseTeacher =
+                lesson.getCourse()
+                        .getTeacher()
+                        .getUserId()
+                        .equals(currentUser.getUserId());
+
+        if (!isAdmin && !isCourseTeacher) {
+
+            throw new AccessDeniedException(
+                    "You are not allowed to update this lesson"
+            );
+        }
+
+        lessonMapper.updateLessonFromRequest(
+                request,
+                lesson
+        );
+
+        Lesson updatedLesson =
+                lessonRepository.save(lesson);
+
+        return lessonMapper.toResponse(updatedLesson);
     }
 }
