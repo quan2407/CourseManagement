@@ -13,6 +13,10 @@ public class LessonResponse {
 
     private String title;
 
+    private String contentUrl;
+
+    private String textContent;
+
     private Integer orderIndex;
 
     private Boolean isPublished;
