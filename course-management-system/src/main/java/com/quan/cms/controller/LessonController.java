@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -36,6 +38,16 @@ public class LessonController {
                         request,
                         authentication.getName()
                 )
+        );
+    }
+    @GetMapping("/courses/{courseId}/lessons")
+    public ApiResponse<List<LessonResponse>> getLessonsByCourse(
+            @PathVariable Long courseId
+    ) {
+
+        return ResponseUtil.success(
+                "Lessons retrieved successfully",
+                lessonService.getLessonsByCourse(courseId)
         );
     }
 }

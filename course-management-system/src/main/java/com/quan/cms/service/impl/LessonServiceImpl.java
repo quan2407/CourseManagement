@@ -16,6 +16,8 @@ import com.quan.cms.service.LessonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class LessonServiceImpl implements LessonService {
@@ -74,5 +76,28 @@ public class LessonServiceImpl implements LessonService {
                 lessonRepository.save(lesson);
 
         return lessonMapper.toResponse(savedLesson);
+    }
+
+    @Override
+    public List<LessonResponse> getLessonsByCourse(
+            Long courseId
+    ) {
+
+        if (!courseRepository.existsById(courseId)) {
+
+            throw new ResourceNotFoundException(
+                    "Course not found"
+            );
+        }
+
+        List<Lesson> lessons =
+                lessonRepository
+                        .findByCourseCourseIdAndIsPublishedTrue(
+                                courseId
+                        );
+
+        return lessons.stream()
+                .map(lessonMapper::toResponse)
+                .toList();
     }
 }
