@@ -1,6 +1,7 @@
 package com.quan.cms.service.impl;
 
 import com.quan.cms.dto.request.CreateUserRequest;
+import com.quan.cms.dto.request.UpdateProfileRequest;
 import com.quan.cms.dto.request.UpdateUserRoleRequest;
 import com.quan.cms.dto.request.UpdateUserStatusRequest;
 import com.quan.cms.dto.response.UserResponse;
@@ -12,6 +13,7 @@ import com.quan.cms.mapper.UserMapper;
 import com.quan.cms.repository.UserRepository;
 import com.quan.cms.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -172,5 +174,70 @@ public class UserServiceImpl implements UserService {
         }
 
         userRepository.delete(user);
+    }
+
+    @Override
+    public UserResponse updateProfile(
+
+            Long userId,
+
+            UpdateProfileRequest request,
+
+            String username
+    ) {
+
+        User targetUser = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "User not found"
+                        )
+                );
+
+        User currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "User not found"
+                        )
+                );
+
+        boolean isAdmin =
+                currentUser.getRole() == Role.ADMIN;
+
+        boolean isOwner =
+                currentUser.getUserId()
+                        .equals(userId);
+
+        if (!isAdmin && !isOwner) {
+
+            throw new AccessDeniedException(
+                    "You are not allowed to update this profile"
+            );
+        }
+
+        boolean emailExists =
+                userRepository.existsByEmail(
+                        request.getEmail()
+                );
+
+        boolean sameEmail =
+                targetUser.getEmail()
+                        .equals(request.getEmail());
+
+        if (emailExists && !sameEmail) {
+
+            throw new BadRequestException(
+                    "Email already exists"
+            );
+        }
+
+        userMapper.updateProfileFromRequest(
+                request,
+                targetUser
+        );
+
+        User updatedUser =
+                userRepository.save(targetUser);
+
+        return userMapper.toResponse(updatedUser);
     }
 }

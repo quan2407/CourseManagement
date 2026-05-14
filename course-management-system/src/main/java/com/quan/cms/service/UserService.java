@@ -1,6 +1,7 @@
 package com.quan.cms.service;
 
 import com.quan.cms.dto.request.CreateUserRequest;
+import com.quan.cms.dto.request.UpdateProfileRequest;
 import com.quan.cms.dto.request.UpdateUserRoleRequest;
 import com.quan.cms.dto.request.UpdateUserStatusRequest;
 import com.quan.cms.dto.response.UserResponse;
@@ -30,4 +31,13 @@ public interface UserService {
     );
 
     void deleteUser(Long userId);
+
+    UserResponse updateProfile(
+
+            Long userId,
+
+            UpdateProfileRequest request,
+
+            String username
+    );
 }

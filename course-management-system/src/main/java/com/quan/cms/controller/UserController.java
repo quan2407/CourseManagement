@@ -1,6 +1,7 @@
 package com.quan.cms.controller;
 
 import com.quan.cms.dto.request.CreateUserRequest;
+import com.quan.cms.dto.request.UpdateProfileRequest;
 import com.quan.cms.dto.request.UpdateUserRoleRequest;
 import com.quan.cms.dto.request.UpdateUserStatusRequest;
 import com.quan.cms.dto.response.ApiResponse;
@@ -11,6 +12,7 @@ import com.quan.cms.util.ResponseUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -108,6 +110,27 @@ public class UserController {
         return ResponseUtil.success(
                 "User deleted successfully",
                 null
+        );
+    }
+    @PutMapping("/{userId}")
+    public ApiResponse<UserResponse> updateProfile(
+
+            @PathVariable Long userId,
+
+            @Valid
+            @RequestBody
+            UpdateProfileRequest request,
+
+            Authentication authentication
+    ) {
+
+        return ResponseUtil.success(
+                "Profile updated successfully",
+                userService.updateProfile(
+                        userId,
+                        request,
+                        authentication.getName()
+                )
         );
     }
 }
