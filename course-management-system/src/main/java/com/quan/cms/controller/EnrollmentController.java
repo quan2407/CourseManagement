@@ -2,6 +2,7 @@ package com.quan.cms.controller;
 
 import com.quan.cms.dto.request.CreateEnrollmentRequest;
 import com.quan.cms.dto.response.ApiResponse;
+import com.quan.cms.dto.response.EnrollmentDetailResponse;
 import com.quan.cms.dto.response.EnrollmentResponse;
 import com.quan.cms.service.EnrollmentService;
 import com.quan.cms.util.ResponseUtil;
@@ -45,6 +46,23 @@ public class EnrollmentController {
         return ResponseUtil.success(
                 "Enrollments retrieved successfully",
                 enrollmentService.getMyEnrollments(
+                        authentication.getName()
+                )
+        );
+    }
+    @GetMapping("/{enrollmentId}")
+    public ApiResponse<EnrollmentDetailResponse>
+    getEnrollmentDetail(
+
+            @PathVariable Long enrollmentId,
+
+            Authentication authentication
+    ) {
+
+        return ResponseUtil.success(
+                "Enrollment detail retrieved successfully",
+                enrollmentService.getEnrollmentDetail(
+                        enrollmentId,
                         authentication.getName()
                 )
         );
