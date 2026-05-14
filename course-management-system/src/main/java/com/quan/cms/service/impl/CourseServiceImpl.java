@@ -232,4 +232,43 @@ public class CourseServiceImpl implements CourseService {
                 .map(courseMapper::toResponse)
                 .toList();
     }
+    @Override
+    public List<CourseResponse> getCoursesByTeacher(
+
+            Long teacherId,
+
+            String username
+    ) {
+
+        User currentUser = userRepository
+                .findByUsername(username)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "User not found"
+                        )
+                );
+
+        List<Course> courses;
+
+        if (currentUser.getRole() == Role.ADMIN) {
+
+            courses =
+                    courseRepository.findByTeacherUserId(
+                            teacherId
+                    );
+
+        } else {
+
+            courses =
+                    courseRepository
+                            .findByTeacherUserIdAndStatus(
+                                    teacherId,
+                                    CourseStatus.PUBLISHED
+                            );
+        }
+
+        return courses.stream()
+                .map(courseMapper::toResponse)
+                .toList();
+    }
 }

@@ -129,4 +129,22 @@ public class CourseController {
                 )
         );
     }
+    @GetMapping(params = "teacher_id")
+    public ApiResponse<List<CourseResponse>>
+    getCoursesByTeacher(
+
+            @RequestParam("teacher_id")
+            Long teacherId,
+
+            Authentication authentication
+    ) {
+
+        return ResponseUtil.success(
+                "Courses retrieved successfully",
+                courseService.getCoursesByTeacher(
+                        teacherId,
+                        authentication.getName()
+                )
+        );
+    }
 }

@@ -35,4 +35,10 @@ public interface CourseService {
 
             String username
     );
+    List<CourseResponse> getCoursesByTeacher(
+
+            Long teacherId,
+
+            String username
+    );
 }
