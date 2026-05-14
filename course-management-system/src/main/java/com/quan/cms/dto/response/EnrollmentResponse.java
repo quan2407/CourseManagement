@@ -2,6 +2,8 @@ package com.quan.cms.dto.response;
 
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,5 +17,5 @@ public class EnrollmentResponse {
 
     private String courseTitle;
 
-    private Integer progressPercent;
+    private BigDecimal progressPercentage;
 }

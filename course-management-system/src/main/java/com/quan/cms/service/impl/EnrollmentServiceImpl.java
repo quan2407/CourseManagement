@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -102,5 +103,19 @@ public class EnrollmentServiceImpl
         return enrollmentMapper.toResponse(
                 savedEnrollment
         );
+    }
+    @Override
+    public List<EnrollmentResponse> getMyEnrollments(
+            String username
+    ) {
+
+        List<Enrollment> enrollments =
+                enrollmentRepository.findByStudentUsername(
+                        username
+                );
+
+        return enrollments.stream()
+                .map(enrollmentMapper::toResponse)
+                .toList();
     }
 }

@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/enrollments")
 @RequiredArgsConstructor
@@ -31,6 +33,18 @@ public class EnrollmentController {
                 "Course enrolled successfully",
                 enrollmentService.enrollCourse(
                         request,
+                        authentication.getName()
+                )
+        );
+    }
+    @GetMapping
+    public ApiResponse<List<EnrollmentResponse>> getMyEnrollments(
+            Authentication authentication
+    ) {
+
+        return ResponseUtil.success(
+                "Enrollments retrieved successfully",
+                enrollmentService.getMyEnrollments(
                         authentication.getName()
                 )
         );
