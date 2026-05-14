@@ -29,4 +29,10 @@ public interface CourseService {
             UpdateCourseStatusRequest request
     );
     void deleteCourse(Long courseId);
+    List<CourseResponse> searchCourses(
+
+            String keyword,
+
+            String username
+    );
 }

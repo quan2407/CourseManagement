@@ -188,4 +188,48 @@ public class CourseServiceImpl implements CourseService {
 
         courseRepository.delete(course);
     }
+
+    @Override
+    public List<CourseResponse> searchCourses(
+
+            String keyword,
+
+            String username
+    ) {
+
+        User currentUser = userRepository
+                .findByUsername(username)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "User not found"
+                        )
+                );
+
+        List<Course> courses;
+
+        if (currentUser.getRole() == Role.ADMIN) {
+
+            courses =
+                    courseRepository
+                            .findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+                                    keyword,
+                                    keyword
+                            );
+
+        } else {
+
+            courses =
+                    courseRepository
+                            .findByStatusAndTitleContainingIgnoreCaseOrStatusAndDescriptionContainingIgnoreCase(
+                                    CourseStatus.PUBLISHED,
+                                    keyword,
+                                    CourseStatus.PUBLISHED,
+                                    keyword
+                            );
+        }
+
+        return courses.stream()
+                .map(courseMapper::toResponse)
+                .toList();
+    }
 }

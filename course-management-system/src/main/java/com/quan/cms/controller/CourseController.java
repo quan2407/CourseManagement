@@ -12,6 +12,7 @@ import com.quan.cms.util.ResponseUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -110,6 +111,22 @@ public class CourseController {
         return ResponseUtil.success(
                 "Course deleted successfully",
                 null
+        );
+    }
+    @GetMapping(params = "search")
+    public ApiResponse<List<CourseResponse>> searchCourses(
+
+            @RequestParam String search,
+
+            Authentication authentication
+    ) {
+
+        return ResponseUtil.success(
+                "Courses retrieved successfully",
+                courseService.searchCourses(
+                        search,
+                        authentication.getName()
+                )
         );
     }
 }

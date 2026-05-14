@@ -9,4 +9,22 @@ import java.util.List;
 public interface CourseRepository extends JpaRepository<Course, Long> {
 
     List<Course> findByStatus(CourseStatus status);
+    List<Course>
+    findByStatusAndTitleContainingIgnoreCaseOrStatusAndDescriptionContainingIgnoreCase(
+
+            CourseStatus status1,
+
+            String titleKeyword,
+
+            CourseStatus status2,
+
+            String descriptionKeyword
+    );
+    List<Course>
+    findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+
+            String titleKeyword,
+
+            String descriptionKeyword
+    );
 }
