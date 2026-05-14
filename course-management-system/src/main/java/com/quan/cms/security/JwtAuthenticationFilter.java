@@ -1,5 +1,6 @@
 package com.quan.cms.security;
 
+import com.quan.cms.service.TokenBlacklistService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,7 +23,7 @@ public class JwtAuthenticationFilter
     private final JwtUtil jwtUtil;
 
     private final CustomUserDetailsService userDetailsService;
-
+    private final TokenBlacklistService tokenBlacklistService;
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -56,7 +57,9 @@ public class JwtAuthenticationFilter
                     userDetailsService
                             .loadUserByUsername(username);
 
-            if (jwtUtil.isTokenValid(jwt, userDetails)) {
+            if (jwtUtil.isTokenValid(jwt, userDetails)
+                    &&
+                    !tokenBlacklistService.isBlacklisted(jwt)) {
 
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(
