@@ -1,6 +1,7 @@
 package com.quan.cms.service;
 
 import com.quan.cms.dto.request.CreateEnrollmentRequest;
+import com.quan.cms.dto.response.CompleteLessonResponse;
 import com.quan.cms.dto.response.EnrollmentDetailResponse;
 import com.quan.cms.dto.response.EnrollmentResponse;
 
@@ -17,6 +18,14 @@ public interface EnrollmentService {
     );
     EnrollmentDetailResponse getEnrollmentDetail(
             Long enrollmentId,
+            String username
+    );
+    CompleteLessonResponse completeLesson(
+
+            Long enrollmentId,
+
+            Long lessonId,
+
             String username
     );
 }

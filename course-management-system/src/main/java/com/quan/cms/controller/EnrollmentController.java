@@ -2,6 +2,7 @@ package com.quan.cms.controller;
 
 import com.quan.cms.dto.request.CreateEnrollmentRequest;
 import com.quan.cms.dto.response.ApiResponse;
+import com.quan.cms.dto.response.CompleteLessonResponse;
 import com.quan.cms.dto.response.EnrollmentDetailResponse;
 import com.quan.cms.dto.response.EnrollmentResponse;
 import com.quan.cms.service.EnrollmentService;
@@ -63,6 +64,28 @@ public class EnrollmentController {
                 "Enrollment detail retrieved successfully",
                 enrollmentService.getEnrollmentDetail(
                         enrollmentId,
+                        authentication.getName()
+                )
+        );
+    }
+    @PutMapping(
+            "/{enrollmentId}/complete_lesson/{lessonId}"
+    )
+    public ApiResponse<CompleteLessonResponse>
+    completeLesson(
+
+            @PathVariable Long enrollmentId,
+
+            @PathVariable Long lessonId,
+
+            Authentication authentication
+    ) {
+
+        return ResponseUtil.success(
+                "Lesson completed successfully",
+                enrollmentService.completeLesson(
+                        enrollmentId,
+                        lessonId,
                         authentication.getName()
                 )
         );

@@ -1,29 +1,25 @@
 package com.quan.cms.service.impl;
 
 import com.quan.cms.dto.request.CreateEnrollmentRequest;
+import com.quan.cms.dto.response.CompleteLessonResponse;
 import com.quan.cms.dto.response.EnrollmentDetailResponse;
 import com.quan.cms.dto.response.EnrollmentLessonResponse;
 import com.quan.cms.dto.response.EnrollmentResponse;
-import com.quan.cms.entity.Course;
-import com.quan.cms.entity.Enrollment;
-import com.quan.cms.entity.Lesson;
-import com.quan.cms.entity.User;
+import com.quan.cms.entity.*;
 import com.quan.cms.enums.CourseStatus;
 import com.quan.cms.enums.EnrollmentStatus;
 import com.quan.cms.enums.Role;
 import com.quan.cms.exception.BadRequestException;
 import com.quan.cms.exception.ResourceNotFoundException;
 import com.quan.cms.mapper.EnrollmentMapper;
-import com.quan.cms.repository.CourseRepository;
-import com.quan.cms.repository.EnrollmentRepository;
-import com.quan.cms.repository.LessonProgressRepository;
-import com.quan.cms.repository.UserRepository;
+import com.quan.cms.repository.*;
 import com.quan.cms.service.EnrollmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -40,6 +36,7 @@ public class EnrollmentServiceImpl
 
     private final EnrollmentMapper enrollmentMapper;
     private final LessonProgressRepository lessonProgressRepository;
+    private final LessonRepository lessonRepository;
     @Override
     public EnrollmentResponse enrollCourse(
             CreateEnrollmentRequest request,
@@ -188,6 +185,131 @@ public class EnrollmentServiceImpl
                         enrollment.getStatus().name()
                 )
                 .lessons(lessons)
+                .build();
+    }
+    @Override
+    public CompleteLessonResponse completeLesson(
+
+            Long enrollmentId,
+
+            Long lessonId,
+
+            String username
+    ) {
+
+        Enrollment enrollment =
+                enrollmentRepository.findById(enrollmentId)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Enrollment not found"
+                                )
+                        );
+
+        if (!enrollment.getStudent()
+                .getUsername()
+                .equals(username)) {
+
+            throw new AccessDeniedException(
+                    "You are not allowed to update this enrollment"
+            );
+        }
+
+        Lesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Lesson not found"
+                        )
+                );
+
+        if (!lesson.getCourse()
+                .getCourseId()
+                .equals(
+                        enrollment.getCourse().getCourseId()
+                )) {
+
+            throw new BadRequestException(
+                    "Lesson does not belong to enrolled course"
+            );
+        }
+
+        if (!lesson.getIsPublished()) {
+
+            throw new BadRequestException(
+                    "Cannot complete unpublished lesson"
+            );
+        }
+
+        boolean alreadyCompleted =
+                lessonProgressRepository
+                        .findByEnrollmentEnrollmentIdAndLessonLessonId(
+                                enrollmentId,
+                                lessonId
+                        )
+                        .isPresent();
+
+        if (!alreadyCompleted) {
+
+            LessonProgress lessonProgress =
+                    LessonProgress.builder()
+                            .enrollment(enrollment)
+                            .lesson(lesson)
+                            .completedAt(LocalDateTime.now())
+                            .build();
+
+            lessonProgressRepository.save(
+                    lessonProgress
+            );
+        }
+
+        long completedLessons =
+                lessonProgressRepository
+                        .countByEnrollmentEnrollmentId(
+                                enrollmentId
+                        );
+
+        long totalLessons =
+                enrollment.getCourse()
+                        .getLessons()
+                        .stream()
+                        .filter(Lesson::getIsPublished)
+                        .count();
+
+        BigDecimal progress =
+                BigDecimal.valueOf(completedLessons)
+                        .multiply(BigDecimal.valueOf(100))
+                        .divide(
+                                BigDecimal.valueOf(totalLessons),
+                                2,
+                                RoundingMode.HALF_UP
+                        );
+
+        enrollment.setProgressPercentage(progress);
+
+        if (progress.compareTo(
+                BigDecimal.valueOf(100)
+        ) == 0) {
+
+            enrollment.setStatus(
+                    EnrollmentStatus.COMPLETED
+            );
+        }
+
+        Enrollment updatedEnrollment =
+                enrollmentRepository.save(enrollment);
+
+        return CompleteLessonResponse.builder()
+                .enrollmentId(
+                        updatedEnrollment.getEnrollmentId()
+                )
+                .progressPercentage(
+                        updatedEnrollment
+                                .getProgressPercentage()
+                )
+                .status(
+                        updatedEnrollment
+                                .getStatus()
+                                .name()
+                )
                 .build();
     }
 }

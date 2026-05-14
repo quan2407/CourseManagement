@@ -11,4 +11,7 @@ public interface LessonProgressRepository extends JpaRepository<LessonProgress, 
             Long enrollmentId,
             Long lessonId
     );
+    long countByEnrollmentEnrollmentId(
+            Long enrollmentId
+    );
 }
