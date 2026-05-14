@@ -1,9 +1,6 @@
 package com.quan.cms.service.impl;
 
-import com.quan.cms.dto.request.CreateUserRequest;
-import com.quan.cms.dto.request.UpdateProfileRequest;
-import com.quan.cms.dto.request.UpdateUserRoleRequest;
-import com.quan.cms.dto.request.UpdateUserStatusRequest;
+import com.quan.cms.dto.request.*;
 import com.quan.cms.dto.response.UserResponse;
 import com.quan.cms.entity.User;
 import com.quan.cms.enums.Role;
@@ -239,5 +236,67 @@ public class UserServiceImpl implements UserService {
                 userRepository.save(targetUser);
 
         return userMapper.toResponse(updatedUser);
+    }
+    @Override
+    public void changePassword(
+
+            Long userId,
+
+            ChangePasswordRequest request,
+
+            String username
+    ) {
+
+        User targetUser = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "User not found"
+                        )
+                );
+
+        User currentUser = userRepository.findByUsername(username)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "User not found"
+                        )
+                );
+
+        boolean isAdmin =
+                currentUser.getRole() == Role.ADMIN;
+
+        boolean isOwner =
+                currentUser.getUserId()
+                        .equals(userId);
+
+        if (!isAdmin && !isOwner) {
+
+            throw new AccessDeniedException(
+                    "You are not allowed to change this password"
+            );
+        }
+
+        if (isOwner && !isAdmin) {
+
+            boolean matches =
+                    passwordEncoder.matches(
+                            request.getCurrentPassword(),
+                            targetUser.getPasswordHash()
+                    );
+
+            if (!matches) {
+
+                throw new BadRequestException(
+                        "Current password is incorrect"
+                );
+            }
+        }
+
+        targetUser.setPasswordHash(
+                passwordEncoder.encode(
+                        request.getNewPassword()
+                )
+        );
+
+        userRepository.save(targetUser);
     }
 }

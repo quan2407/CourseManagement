@@ -1,9 +1,6 @@
 package com.quan.cms.controller;
 
-import com.quan.cms.dto.request.CreateUserRequest;
-import com.quan.cms.dto.request.UpdateProfileRequest;
-import com.quan.cms.dto.request.UpdateUserRoleRequest;
-import com.quan.cms.dto.request.UpdateUserStatusRequest;
+import com.quan.cms.dto.request.*;
 import com.quan.cms.dto.response.ApiResponse;
 import com.quan.cms.dto.response.UserResponse;
 import com.quan.cms.enums.Role;
@@ -131,6 +128,29 @@ public class UserController {
                         request,
                         authentication.getName()
                 )
+        );
+    }
+    @PutMapping("/{userId}/password")
+    public ApiResponse<Object> changePassword(
+
+            @PathVariable Long userId,
+
+            @Valid
+            @RequestBody
+            ChangePasswordRequest request,
+
+            Authentication authentication
+    ) {
+
+        userService.changePassword(
+                userId,
+                request,
+                authentication.getName()
+        );
+
+        return ResponseUtil.success(
+                "Password changed successfully",
+                null
         );
     }
 }
