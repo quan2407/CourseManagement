@@ -40,7 +40,10 @@ public class UserController {
             @RequestParam(required = false)
             Role role,
 
-            @RequestParam(required = false)
+            @RequestParam(
+                    required = false,
+                    name = "status"
+            )
             Boolean isActive
     ) {
 
